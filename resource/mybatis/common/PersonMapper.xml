@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Person" >
+  <select id="selectByPrimaryKey" resultType="Person" parameterType="java.lang.Integer" >
+    select     *    from person    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="coachListByCourse" parameterType="String" resultType="Person">
+  	select p.*,c.price as course_price,d.name as driving_name
+  	from person p left join driving d on p.driving_id=d.id left join course c on p.course_id=c.id
+  	where  p.course_id =#{data}
+  </select>
+  <select id="selectByLogin" resultType="Person" parameterType="Person">
+  	select * from person where pwd=#{pwd} and tel=#{tel} and type=1
+  </select>
+  <select id="personById" resultType="Person" parameterType="Integer">
+  	select * from person where id=#{id}
+  </select>
+  <select id="sparringQuery" resultType="Person" parameterType="Map">
+  	select p.* from person p 
+  	<if test="person.p_id!=0 and person.city!=null and person.city!=0">
+  		,city c
+  	</if>
+  	<where>
+  		p.use_state=1 and p.type=2
+  		<if test="person.p_id==0 and person.city!=null and person.city!=0">
+	  		and p.city in (select id from city where p_id=#{person.city}) 
+	  	</if>
+	  	<if test="person.p_id!=0 and person.city!=null and person.city!=0">
+	  		and p.city=c.id and p.city = #{person.city}
+	  	</if>
+  		<if test="person.nick_name!=null and person.nick_name!=''">
+  			and p.nick_name like concat("%",#{person.nick_name},"%")
+  		</if>
+  		<if test="person.driving_id!=null and person.driving_id!=0">
+  			and p.driving_id=#{person.driving_id}
+  		</if>
+  		<if test="condition!=null and condition!=''">
+  			and (p.nick_name like concat("%",#{condition},"%") or p.address like concat("%",#{condition},"%") )
+  		</if>
+  	</where>
+  	order by score desc 
+  	<if test="begin!=null and end!=null">
+  		limit #{begin},#{end}
+  	</if>
+  </select>
+  <select id="personQueryByCoach" resultType="Person" parameterType="Map">
+  	select p.*,d.name as driving_name,course.price as course_price 
+  	from person p left join course on p.course_id=course.id,driving d
+  	<if test="person.p_id!=0 and person.city!=null and person.city!=0">
+  		,city c
+  	</if>
+  	<where>
+  		p.type=3 and p.driving_id=d.id and p.use_state=1
+  		<if test="person.p_id==0 and person.city!=null and person.city!=0">
+	  		and d.city in (select id from city where p_id=#{person.city}) 
+	  	</if>
+	  	<if test="person.p_id!=0 and person.city!=null and person.city!=0">
+	  		and d.city=c.id and d.city = #{person.city}
+	  	</if>
+  		<if test="person.nick_name!=null and person.nick_name!=''">
+  			and p.nick_name like concat("%",#{person.nick_name},"%")
+  		</if>
+  		<if test="person.driving_id!=null and person.driving_id!=''">
+  			and p.driving_id=#{person.driving_id}
+  		</if>
+  		<if test="condition!=null and condition!=''">
+  			and (p.nick_name like concat("%",#{condition},"%") or p.address like concat("%",#{condition},"%") )
+  		</if>
+  	</where>
+  	order by p.score desc 
+  	<if test="begin!=null and end!=null">
+  		limit #{begin},#{end}
+  	</if>
+  </select>
+  <select id="personJudgeTelRepeat" resultType="Integer" parameterType="String">
+  		select count(*) from person where tel=#{tel}
+  </select>
+  <select id="judgePwd" parameterType="Person" resultType="Integer">
+  	select count(id) from person where id=#{id} and pwd = #{pwd} 
+  </select>
+  <update id="updatePwd" parameterType="Person">
+  	update person set pwd = #{pwd} where tel =#{tel}
+  </update>
+  <insert id="insert" parameterType="Person" keyProperty="id" keyColumn="id" useGeneratedKeys="true">
+    insert into person
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="nick_name != null" >
+        nick_name,
+      </if>
+      <if test="tel != null" >
+        tel,
+      </if>
+      <if test="score != null" >
+        score,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="use_state != null" >
+        use_state,
+      </if>
+      <if test="photo != null and photo!=''" >
+        photo,
+      </if>
+      <if test="api_photo != null and api_photo !=''" >
+        photo,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="skill != null" >
+        skill,
+      </if>
+      <if test="course_id != null" >
+        course_id,
+      </if>
+      <if test="sign != null" >
+        sign,
+      </if>
+      <if test="real_name != null" >
+        real_name,
+      </if>
+      <if test="driving_id != null" >
+        driving_id,
+      </if>
+      <if test="admin_id != null" >
+        admin_id,
+      </if>
+      <if test="pwd != null" >
+        pwd,
+      </if>
+      <if test="birthday != null" >
+        birthday,
+      </if>      
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="nick_name != null" >
+        #{nick_name,jdbcType=VARCHAR},
+      </if>
+      <if test="tel != null" >
+        #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="score != null" >
+        #{score,jdbcType=REAL},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="use_state != null" >
+        #{use_state,jdbcType=INTEGER},
+      </if>
+      <if test="photo != null and photo!=''" >
+        #{photo,jdbcType=VARCHAR},
+      </if>
+      <if test="api_photo != null and api_photo !=''" >
+        #{api_photo},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=REAL},
+      </if>
+      <if test="skill != null" >
+        #{skill,jdbcType=VARCHAR},
+      </if>
+      <if test="course_id != null" >
+        #{course_id,jdbcType=VARCHAR},
+      </if>
+      <if test="sign != null" >
+        #{sign,jdbcType=VARCHAR},
+      </if>
+      <if test="real_name != null" >
+        #{real_name,jdbcType=VARCHAR},
+      </if>
+      <if test="driving_id != null" >
+        #{driving_id,jdbcType=INTEGER},
+      </if>
+      <if test="admin_id != null" >
+        #{admin_id,jdbcType=INTEGER},
+      </if>
+      <if test="pwd != null" >
+        #{pwd},
+      </if>
+      <if test="birthday != null and birthday!=''" >
+        #{birthday},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="Person" >
+    update person
+    <set >
+      <if test="nick_name != null" >
+        nick_name = #{nick_name,jdbcType=VARCHAR},
+      </if>
+      <if test="tel != null" >
+        tel = #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="score != null" >
+        score = #{score,jdbcType=REAL},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="photo != null and photo!=''" >
+        photo = #{photo,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=REAL},
+      </if>
+      <if test="skill != null" >
+        skill = #{skill,jdbcType=VARCHAR},
+      </if>
+      <if test="course_id != null" >
+        course_id = #{course_id,jdbcType=VARCHAR},
+      </if>
+      <if test="sign != null" >
+        sign = #{sign,jdbcType=VARCHAR},
+      </if>
+      <if test="real_name != null" >
+        real_name = #{real_name,jdbcType=VARCHAR},
+      </if>
+      <if test="driving_id != null" >
+        driving_id = #{driving_id,jdbcType=INTEGER},
+      </if>
+      <if test="admin_id != null" >
+        admin_id = #{admin_id,jdbcType=INTEGER},
+      </if>
+      <if test="api_photo != null" >
+        photo = #{api_photo,jdbcType=VARCHAR},
+      </if>
+      <if test="pwd != null" >
+        pwd = #{pwd},
+      </if>
+      <if test="birthday != null and birthday!=''" >
+        birthday = #{birthday},
+      </if>
+      <if test="push_state != null and push_state!=0" >
+        push_state = #{push_state},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!-- 用户更新头像，api使用 -->
+  <update id="updateByPhoto" parameterType="Map">
+  	update person set photo = #{photo} where id = #{id}
+  </update>
+  
+  <select id="judgeTel" parameterType="String" resultType="Integer">
+  	select count(id) from person where tel=#{tel}
+  </select>
+</mapper>

@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="SecondHand" >
+  <select id="selectByPrimaryKey" resultType="SecondHand" parameterType="java.lang.Integer" >
+    select * from second_hand  where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectListForApi" parameterType="Map" resultType="SecondHand">
+  	select sh.*,cr.id as flag from city c, second_hand sh left join collection_record cr on cr.type=1 
+  	<if test="p_id!=null">
+  		and cr.p_id=${p_id} 
+  	</if>
+  	and cr.other_id=sh.id
+  	<where>
+  		sh.city=c.id
+  		<if test="secondHand.city!=null and secondHand.city!=0">
+  			and sh.city = #{secondHand.city}
+  		</if>
+  		<if test="condition!=null and condition!=''">
+  			and (sh.brand like concat ("%",#{condition},"%") or sh.simple_des like concat ("%", #{condition},"%") or sh.name like concat ("%",  #{condition},"%"))
+  		</if>
+  		<if test="secondHand.use_state!=null and secondHand.use_state!=0">
+  			and sh.use_state = #{secondHand.use_state}
+  		</if>
+  		<if test="secondHand.brand!=null and secondHand.brand!=''">
+  			and sh.brand = #{secondHand.brand}
+  		</if>
+  		<if test="secondHand.stall!=null and secondHand.stall!=0">
+  			and sh.stall = #{secondHand.stall}
+  		</if>
+  		<if test="secondHand.color!=null and secondHand.color!=''">
+  			and sh.color = #{secondHand.color}
+  		</if>
+  		<if test="secondHand.models!=null and secondHand.models!=''">
+  			and sh.models = #{secondHand.models}
+  		</if>
+  		<if test="secondHand.standard!=null and secondHand.standard!=0">
+  			and sh.standard &gt;= #{secondHand.standard}
+  		</if>
+		<if test="beginPrice!=null and beginPrice!=0.0">
+  			and sh.price &gt;= #{beginPrice}
+  		</if>
+  		<if test="endPrice!=null and endPrice!=0.0">
+  			and sh.price &lt;= #{endPrice}
+  		</if>
+  		<if test="beginAge!=null and beginAge!=0">
+  			and sh.age &gt;= #{beginAge}
+  		</if>
+  		<if test="endAge!=null and endAge!=0">
+  			and sh.age &lt;= #{endAge}
+  		</if>
+  		<if test="beginMileage!=null and beginMileage!=''">
+  			and sh.mileage &gt;= #{beginMileage}
+  		</if>
+  		<if test="endMileage!=null and endMileage!=''">
+  			and sh.mileage &lt;= #{endMileage}
+  		</if>
+  		<if test="beginDisplacement!=null and beginDisplacement!=''">
+  			and sh.displacement &gt;= #{beginDisplacement}
+  		</if>
+  		<if test="endDisplacement!=null and endDisplacement!=''">
+  			and sh.displacement &lt;= #{endDisplacement}
+  		</if>
+  	</where>
+  	<if test="orderCondition=='price'">
+  		order by sh.price
+  	</if>
+  	<if test="orderCondition=='age'">
+  		order by sh.age
+  	</if>
+  	<if test="orderCondition=='mileage'">
+  		order by sh.mileage
+  	</if>
+  	<if test="orderCondition==null or orderCondition==''">
+  		order by sh.id desc
+  	</if>
+  	<if test="begin!=null and end!=null">
+  		limit #{begin},#{end}
+  	</if>
+  </select>
+  <!-- 用户收藏列表 -->
+  <select id="CollectionRecordSecondList" parameterType="Map" resultType="SecondHand">
+  		select cr.id,sh.name,sh.simple_des,sh.cover,sh.create_date,sh.price,sh.mileage
+		from second_hand sh,collection_record cr where sh.id in (select other_id from collection_record where p_id=#{p_id} and type=1)
+		and sh.use_state=1 and cr.other_id = sh.id and type=1 GROUP BY sh.id order by sh.id desc limit #{begin},#{end}
+  </select>
+  <insert id="insert" parameterType="SecondHand" >
+    insert into second_hand
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="original_price != null" >
+        original_price,
+      </if>
+      <if test="tax != null" >
+        tax,
+      </if>
+      <if test="simple_des != null" >
+        simple_des,
+      </if>
+      <if test="brand != null" >
+        brand,
+      </if>
+      <if test="models != null" >
+        models,
+      </if>
+      <if test="age != null" >
+        age,
+      </if>
+      <if test="mileage != null" >
+        mileage,
+      </if>
+      <if test="stall != null" >
+        stall,
+      </if>
+      <if test="displacement != null" >
+        displacement,
+      </if>
+      <if test="standard != null" >
+        standard,
+      </if>
+      <if test="color != null" >
+        color,
+      </if>
+      <if test="use_state != null" >
+        use_state,
+      </if>
+      <if test="admin_id != null" >
+        admin_id,
+      </if>
+      <if test="photo != null" >
+        photo,
+      </if>
+       <if test="name != null" >
+        name,
+      </if>
+      <if test="cover != null" >
+        cover,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="price != null" >
+        #{price,jdbcType=REAL},
+      </if>
+      <if test="original_price != null" >
+        #{original_price,jdbcType=REAL},
+      </if>
+      <if test="tax != null" >
+        #{tax,jdbcType=REAL},
+      </if>
+      <if test="simple_des != null" >
+        #{simple_des,jdbcType=VARCHAR},
+      </if>
+      <if test="brand != null" >
+        #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="models != null" >
+        #{models,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        #{age,jdbcType=INTEGER},
+      </if>
+      <if test="mileage != null" >
+        #{mileage,jdbcType=REAL},
+      </if>
+      <if test="stall != null" >
+        #{stall,jdbcType=INTEGER},
+      </if>
+      <if test="displacement != null" >
+        #{displacement,jdbcType=REAL},
+      </if>
+      <if test="standard != null" >
+        #{standard,jdbcType=INTEGER},
+      </if>
+      <if test="color != null" >
+        #{color,jdbcType=VARCHAR},
+      </if>
+      <if test="use_state != null" >
+        #{use_state,jdbcType=INTEGER},
+      </if>
+      <if test="admin_id != null" >
+        #{admin_id,jdbcType=INTEGER},
+      </if>
+      <if test="photo != null" >
+        #{photo,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name},
+      </if>
+      <if test="cover != null" >
+        #{cover},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="SecondHand" >
+    update second_hand
+    <set >
+      <if test="price != null" >
+        price = #{price,jdbcType=REAL},
+      </if>
+      <if test="original_price != null" >
+        original_price = #{original_price,jdbcType=REAL},
+      </if>
+      <if test="tax != null" >
+        tax = #{tax,jdbcType=REAL},
+      </if>
+      <if test="simple_des != null" >
+        simple_des = #{simple_des,jdbcType=VARCHAR},
+      </if>
+      <if test="brand != null" >
+        brand = #{brand,jdbcType=VARCHAR},
+      </if>
+      <if test="models != null" >
+        models = #{models,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null" >
+        age = #{age,jdbcType=INTEGER},
+      </if>
+      <if test="mileage != null" >
+        mileage = #{mileage,jdbcType=REAL},
+      </if>
+      <if test="stall != null" >
+        stall = #{stall,jdbcType=INTEGER},
+      </if>
+      <if test="displacement != null" >
+        displacement = #{displacement,jdbcType=REAL},
+      </if>
+      <if test="standard != null" >
+        standard = #{standard,jdbcType=INTEGER},
+      </if>
+      <if test="color != null" >
+        color = #{color,jdbcType=VARCHAR},
+      </if>
+      <if test="use_state != null" >
+        use_state = #{use_state,jdbcType=INTEGER},
+      </if>
+      <if test="admin_id != null" >
+        admin_id = #{admin_id,jdbcType=INTEGER},
+      </if>
+      <if test="photo != null" >
+        photo = #{photo,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name},
+      </if>
+      <if test="cover != null" >
+        cover = #{cover},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

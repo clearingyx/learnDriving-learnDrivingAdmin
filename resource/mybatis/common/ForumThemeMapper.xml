@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ForumTheme" >
+  <select id="selectByPrimaryKey" resultType="ForumTheme" parameterType="java.lang.Integer" >
+    select *    from forum_theme    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="forumThemeQuery" parameterType="Map" resultType="ForumTheme">
+  	select f.*,p.p_id as praise_flag,cr.p_id as flag from forum_theme f left join praise_record p on f.id = p.other_id and p.p_id=#{forumTheme.p_id} and p.type=2
+  	left join collection_record cr on cr.p_id=#{forumTheme.p_id} and cr.other_id=f.id and cr.type=2
+  	<where>
+  		<if test="forumTheme.cate_id!=null">
+  			and f.cate_id = #{forumTheme.cate_id}
+  		</if>
+  		<if test="forumTheme.t_isdisabled!=null">
+  			and f.t_isdisabled = #{forumTheme.t_isdisabled}
+  		</if>
+  	</where>
+  	 order by f.top_state desc,f.create_date desc
+  	 <if test="begin!=null and end!=null">
+  	 	limit #{begin},#{end}
+  	 </if>
+  </select>
+  <!-- 用户收藏列表 -->
+  <select id="collectionRecordThemeList" parameterType="Map" resultType="ForumTheme">
+  		select ft.* from forum_theme ft,collection_record cr where ft.id in (select other_id from collection_record where p_id=#{p_id} and type=2)
+  		and ft.t_isdisabled=1 and cr.other_id = ft.id GROUP BY ft.id limit #{begin},#{end}
+  </select>
+  <update id="browseAdd" parameterType="Integer">
+  	update forum_theme set browse = browse+1 where id=#{id}
+  </update>
+  <update id="replyAdd" parameterType="Integer">
+  	update forum_theme set reply_num = reply_num+1 where id =#{id}
+  </update>
+  <update id="praiseAdd" parameterType="Integer">
+  	update forum_theme set praise = praise+1 where id =#{id}
+  </update>
+  <update id="praiseSub" parameterType="Integer">
+  	update forum_theme set praise = praise-1 where id =#{id}
+  </update>
+  <insert id="insert" parameterType="ForumTheme" >
+    insert into forum_theme
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="p_id != null" >
+        p_id,
+      </if>
+      <if test="nick_name != null" >
+        nick_name,
+      </if>
+      <if test="p_photo != null and p_photo!=''" >
+        p_photo,
+      </if>
+      <if test="cate_id != null" >
+        cate_id,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="t_isdisabled != null" >
+        t_isdisabled,
+      </if>
+      <if test="reply_num != null" >
+        reply_num,
+      </if>
+      <if test="photos != null" >
+        photos,
+      </if>
+      <if test="top_state != null" >
+        top_state,
+      </if>
+      <if test="browse != null" >
+        browse,
+      </if>
+      <if test="praise != null" >
+        praise,
+      </if>
+       <if test="content != null" >
+        content,
+      </if>
+      <if test="api_p_photo != null and api_p_photo!=''" >
+        p_photo,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="p_id != null" >
+        #{p_id,jdbcType=INTEGER},
+      </if>
+      <if test="nick_name != null" >
+        #{nick_name,jdbcType=VARCHAR},
+      </if>
+      <if test="p_photo != null and p_photo!=''" >
+        #{p_photo,jdbcType=VARCHAR},
+      </if>
+      <if test="cate_id != null" >
+        #{cate_id,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="t_isdisabled != null" >
+        #{t_isdisabled,jdbcType=INTEGER},
+      </if>
+      <if test="reply_num != null" >
+        #{reply_num,jdbcType=INTEGER},
+      </if>
+      <if test="photos != null" >
+        #{photos,jdbcType=VARCHAR},
+      </if>
+      <if test="top_state != null" >
+        #{top_state,jdbcType=INTEGER},
+      </if>
+      <if test="browse != null" >
+        #{browse,jdbcType=INTEGER},
+      </if>
+      <if test="praise != null" >
+        #{praise,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        #{content},
+      </if>
+      <if test="api_p_photo != null and api_p_photo!=''" >
+        #{api_p_photo},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="ForumTheme" >
+    update forum_theme
+    <set >
+      <if test="p_id != null" >
+        p_id = #{p_id,jdbcType=INTEGER},
+      </if>
+      <if test="nick_name != null" >
+        nick_name = #{nick_name,jdbcType=VARCHAR},
+      </if>
+      <if test="p_photo != null" >
+        p_photo = #{p_photo,jdbcType=VARCHAR},
+      </if>
+      <if test="cate_id != null" >
+        cate_id = #{cate_id,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="t_isdisabled != null" >
+        t_isdisabled = #{t_isdisabled,jdbcType=INTEGER},
+      </if>
+      <if test="reply_num != null" >
+        reply_num = #{reply_num,jdbcType=INTEGER},
+      </if>
+      <if test="photos != null" >
+        photos = #{photos,jdbcType=VARCHAR},
+      </if>
+      <if test="top_state != null" >
+        top_state = #{top_state,jdbcType=INTEGER},
+      </if>
+      <if test="browse != null" >
+        browse = #{browse,jdbcType=INTEGER},
+      </if>
+      <if test="praise != null" >
+        praise = #{praise,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        content = #{content},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

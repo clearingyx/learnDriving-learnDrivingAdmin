@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ForumReply" >
+  <select id="selectByPrimaryKey" resultType="ForumReply" parameterType="java.lang.Integer" >
+    select *    from forum_reply    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="forumReplyQuery" parameterType="Map" resultType="ForumReply">
+  	select * from forum_reply
+  	<where>
+  		<if test="forumReply.f_id!=null">
+  			and f_id = #{forumReply.f_id}
+  		</if>
+  		<if test="forumReply.t_isdisabled!=null">
+  			and t_isdisabled = #{forumReply.t_isdisabled}
+  		</if>
+  	</where>
+  	 order by create_date desc
+  	 <if test="begin!=null and end!=null">
+  	 	limit #{begin},#{end}
+  	 </if>
+  </select>
+  <insert id="insert" parameterType="ForumReply" >
+    insert into forum_reply
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="f_id != null" >
+        f_id,
+      </if>
+      <if test="nick_name != null" >
+        nick_name,
+      </if>
+      <if test="p_photo != null and p_photo!=''" >
+        p_photo,
+      </if>
+      <if test="t_isdisabled != null" >
+        t_isdisabled,
+      </if>
+      <if test="p_id != null" >
+        p_id,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="u_reply_content != null" >
+        u_reply_content,
+      </if>
+      <if test="api_p_photo != null and api_p_photo!=''" >
+        p_photo,
+      </if>
+       <if test="photos != null and photos!=''" >
+        photos,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="f_id != null" >
+        #{f_id,jdbcType=INTEGER},
+      </if>
+      <if test="nick_name != null" >
+        #{nick_name,jdbcType=VARCHAR},
+      </if>
+      <if test="p_photo != null and p_photo!=''" >
+        #{p_photo,jdbcType=VARCHAR},
+      </if>
+      <if test="t_isdisabled != null" >
+        #{t_isdisabled,jdbcType=INTEGER},
+      </if>
+      <if test="p_id != null" >
+        #{p_id,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="u_reply_content != null" >
+        #{u_reply_content,jdbcType=VARCHAR},
+      </if>
+      <if test="api_p_photo != null and api_p_photo!=''" >
+        #{api_p_photo},
+      </if>
+      <if test="photos != null and photos!=''" >
+        #{photos},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="ForumReply" >
+    update forum_reply
+    <set >
+      <if test="f_id != null" >
+        f_id = #{f_id,jdbcType=INTEGER},
+      </if>
+      <if test="nick_name != null" >
+        nick_name = #{nick_name,jdbcType=VARCHAR},
+      </if>
+      <if test="p_photo != null" >
+        p_photo = #{p_photo,jdbcType=VARCHAR},
+      </if>
+      <if test="t_isdisabled != null" >
+        t_isdisabled = #{t_isdisabled,jdbcType=INTEGER},
+      </if>
+      <if test="p_id != null" >
+        p_id = #{p_id,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="u_reply_content != null" >
+        u_reply_content = #{u_reply_content,jdbcType=VARCHAR},
+      </if>
+      <if test="photos != null and photos!=''" >
+        photos = #{photos},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

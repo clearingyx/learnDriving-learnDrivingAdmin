@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Orders" >
+  <select id="selectByPrimaryKey" resultType="Orders" parameterType="Map" >
+    select o.*,dp.nick_name,dp.photo,d.name as driving_name,c.name as course_name
+	from person dp,person p,
+	orders o left join driving d on o.driving_id=d.id left join course c on o.course_id=c.id 
+	where 
+
+	((o.type=2 and o.sparring_id=dp.id) or (o.type=1 and o.coach_id=dp.id)) and o.type!=3
+	and o.p_id=p.id and p.id= #{p_id,jdbcType=INTEGER} 
+
+	and o.id not in(select s.order_id from score s,orders o where s.type=1 and o.type=1) 
+	and o.id not in(select s.order_id from score s,orders o where s.type=3 and o.type=2)
+	and o.driving_state!=3
+	order by o.id desc
+	<if test="begin!=null and end!=null">
+		limit #{begin},#{end}
+	</if>
+  </select>
+  <select id="orderListByPid" parameterType="Map" resultType="Orders">
+  		select * from orders where p_id=#{p_id} and type !=3 order by o.desc
+  		<if test="begin!=null and end!=null">
+  			limit #{begin},#{end}
+  		</if>
+  </select>
+  <select id="selectByOrderRepeat"  parameterType="Orders" resultType="Integer">
+  	select count(id) from orders where tel=#{tel} and real_name=#{real_name} and driving_state not in(8,9)
+  	and driving_id=#{driving_id} and coach_id=#{coach_id} and course_id=#{course_id}
+  </select>
+  <select id="selectByAliPaySn" parameterType="String" resultType="Orders">
+  	select * from orders where alipay_sn = #{alipay_sn}
+  </select>
+  <select id="selectByOrderSn" parameterType="String" resultType="Orders">
+  	select * from orders where order_sn = #{order_sn}
+  </select>
+  <select id="selectJudgeTelRepeat" parameterType="String" resultType="Integer">
+  	select count(*) from orders where type=3 and tel=#{tel} and driving_state in (1,2)
+  </select>
+  <insert id="insert" parameterType="Orders" >
+    insert into orders
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="p_id != null" >
+        p_id,
+      </if>
+      <if test="driving_id != null" >
+        driving_id,
+      </if>
+      <if test="coach_id != null" >
+        coach_id,
+      </if>
+      <if test="course_id != null" >
+        course_id,
+      </if>
+      <if test="sparring_id != null" >
+        sparring_id,
+      </if>
+      <if test="second_hand_id != null" >
+        second_hand_id,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="order_sn != null" >
+        order_sn,
+      </if>
+      <if test="alipay_sn != null" >
+        alipay_sn,
+      </if>
+      <if test="pay_state != null" >
+        pay_state,
+      </if>
+      <if test="driving_state != null" >
+        driving_state,
+      </if>
+      <if test="update_date != null" >
+        update_date,
+      </if>
+      <if test="installment_state != null" >
+        installment_state,
+      </if>
+      <if test="installment_num != null" >
+        installment_num,
+      </if>
+      <if test="admin_id != null" >
+        admin_id,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="real_name != null" >
+        real_name,
+      </if>
+      <if test="tel != null" >
+        tel,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="sparring_hour != null" >
+        sparring_hour,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="p_id != null" >
+        #{p_id,jdbcType=INTEGER},
+      </if>
+      <if test="driving_id != null" >
+        #{driving_id,jdbcType=INTEGER},
+      </if>
+      <if test="coach_id != null" >
+        #{coach_id,jdbcType=INTEGER},
+      </if>
+      <if test="course_id != null" >
+        #{course_id,jdbcType=INTEGER},
+      </if>
+      <if test="sparring_id != null" >
+        #{sparring_id,jdbcType=INTEGER},
+      </if>
+      <if test="second_hand_id != null" >
+        #{second_hand_id,jdbcType=INTEGER},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=REAL},
+      </if>
+      <if test="order_sn != null" >
+        #{order_sn,jdbcType=VARCHAR},
+      </if>
+      <if test="alipay_sn != null" >
+        #{alipay_sn,jdbcType=VARCHAR},
+      </if>
+      <if test="pay_state != null" >
+        #{pay_state,jdbcType=INTEGER},
+      </if>
+      <if test="driving_state != null" >
+        #{driving_state,jdbcType=INTEGER},
+      </if>
+      <if test="update_date != null" >
+        #{update_date,jdbcType=TIMESTAMP},
+      </if>
+      <if test="installment_state != null" >
+        #{installment_state,jdbcType=INTEGER},
+      </if>
+      <if test="installment_num != null" >
+        #{installment_num,jdbcType=INTEGER},
+      </if>
+      <if test="admin_id != null" >
+        #{admin_id,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="real_name != null" >
+        #{real_name},
+      </if>
+      <if test="tel != null" >
+        #{tel},
+      </if>
+      <if test="remark != null" >
+        #{remark},
+      </if>
+      <if test="sparring_hour != null" >
+        #{sparring_hour},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="Orders" >
+    update orders
+    <set >
+      <if test="p_id != null" >
+        p_id = #{p_id,jdbcType=INTEGER},
+      </if>
+      <if test="driving_id != null" >
+        driving_id = #{driving_id,jdbcType=INTEGER},
+      </if>
+      <if test="coach_id != null" >
+        coach_id = #{coach_id,jdbcType=INTEGER},
+      </if>
+      <if test="course_id != null" >
+        course_id = #{course_id,jdbcType=INTEGER},
+      </if>
+      <if test="sparring_id != null" >
+        sparring_id = #{sparring_id,jdbcType=INTEGER},
+      </if>
+      <if test="second_hand_id != null" >
+        second_hand_id = #{second_hand_id,jdbcType=INTEGER},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=REAL},
+      </if>
+      <if test="order_sn != null" >
+        order_sn = #{order_sn,jdbcType=VARCHAR},
+      </if>
+      <if test="alipay_sn != null" >
+        alipay_sn = #{alipay_sn,jdbcType=VARCHAR},
+      </if>
+      <if test="pay_state != null" >
+        pay_state = #{pay_state,jdbcType=INTEGER},
+      </if>
+      <if test="driving_state != null" >
+        driving_state = #{driving_state,jdbcType=INTEGER},
+      </if>
+      <if test="update_date != null" >
+        update_date = #{update_date,jdbcType=TIMESTAMP},
+      </if>
+      <if test="installment_state != null" >
+        installment_state = #{installment_state,jdbcType=INTEGER},
+      </if>
+      <if test="installment_num != null" >
+        installment_num = #{installment_num,jdbcType=INTEGER},
+      </if>
+      <if test="admin_id != null" >
+        admin_id = #{admin_id,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="real_name != null" >
+        real_name = #{real_name},
+      </if>
+      <if test="tel != null" >
+        tel = #{tel},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark},
+      </if>
+      <if test="sparring_hour != null" >
+        sparring_hour = #{sparring_hour},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

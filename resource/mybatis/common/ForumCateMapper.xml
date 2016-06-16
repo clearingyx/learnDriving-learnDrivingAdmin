@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ForumCate" >
+  <select id="selectByPrimaryKey" resultType="ForumCate" parameterType="java.lang.Integer" >
+    select *    from forum_cate    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="forumCateList" resultType="ForumCate">
+  	select * from forum_cate where use_state=1
+  </select>
+  <update id="browseAdd" parameterType="Integer">
+  	update forum_cate set browse = browse+1 where id=#{id}
+  </update>
+  <update id="themeAdd" parameterType="Integer">
+  	update forum_cate set theme_count = theme_count+1 where id=#{id}
+  </update>
+  <insert id="insert" parameterType="ForumCate" >
+    insert into forum_cate
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="cate_name != null" >
+        cate_name,
+      </if>
+      <if test="cate_photo != null" >
+        cate_photo,
+      </if>
+      <if test="browse != null" >
+        browse,
+      </if>
+      <if test="theme_count != null" >
+        theme_count,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="cate_name != null" >
+        #{cate_name,jdbcType=VARCHAR},
+      </if>
+      <if test="cate_photo != null" >
+        #{cate_photo,jdbcType=VARCHAR},
+      </if>
+      <if test="browse != null" >
+        #{browse},
+      </if>
+      <if test="theme_count != null" >
+        #{theme_count},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="ForumCate" >
+    update forum_cate
+    <set >
+      <if test="cate_name != null" >
+        cate_name = #{cate_name,jdbcType=VARCHAR},
+      </if>
+      <if test="cate_photo != null" >
+        cate_photo = #{cate_photo,jdbcType=VARCHAR},
+      </if>
+      <if test="browse != null" >
+        browse = #{browse},
+      </if>
+      <if test="theme_count != null" >
+        theme_count = #{theme_count},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

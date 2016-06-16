@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="PayAccount" >
+  <select id="selectByPrimaryKey" resultType="PayAccount" parameterType="java.lang.Integer" >
+    select     *    from pay_account    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByPid" parameterType="Integer"  resultType="PayAccount">
+  	select * from pay_account where p_id = #{p_id}
+  </select>
+  <insert id="insert" parameterType="PayAccount" >
+    insert into pay_account
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="p_id != null" >
+        p_id,
+      </if>
+      <if test="account != null" >
+        account,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="p_id != null" >
+        #{p_id,jdbcType=INTEGER},
+      </if>
+      <if test="account != null" >
+        #{account,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="PayAccount" >
+    update pay_account
+    <set >
+      <if test="p_id != null" >
+        p_id = #{p_id,jdbcType=INTEGER},
+      </if>
+      <if test="account != null" >
+        account = #{account,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

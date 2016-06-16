@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="MemberPerson" >
+  <select id="selectByPrimaryKey" resultType="MemberPerson" parameterType="java.lang.Integer" >
+    select *    from member_person    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="memberPersonList" parameterType="Integer" resultType="MemberPerson">
+  	select * from member_person where member_id=#{member_id}
+  </select>
+  <select id="judgeRepeat" parameterType="MemberPerson" resultType="Integer">
+  	select count(*) from member_person where tel=#{tel} 
+  	<if test="member_id!=null and member_id!=0">
+  		and member_id = #{member_id}
+  	</if>
+  </select>
+  <insert id="insert" parameterType="MemberPerson" >
+    insert into member_person
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="p_id != null" >
+        p_id,
+      </if>
+      <if test="member_id != null" >
+        member_id,
+      </if>
+      <if test="real_name != null" >
+        real_name,
+      </if>
+      <if test="tel != null" >
+        tel,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="p_photo != null and p_photo !=''"  >
+        p_photo,
+      </if>
+      <if test="api_photo != null and api_photo !=''"  >
+        p_photo,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="p_id != null" >
+        #{p_id,jdbcType=INTEGER},
+      </if>
+      <if test="member_id != null" >
+        #{member_id,jdbcType=INTEGER},
+      </if>
+      <if test="real_name != null" >
+        #{real_name},
+      </if>
+      <if test="tel != null" >
+        #{tel},
+      </if>
+      <if test="remark != null" >
+        #{remark},
+      </if>
+      <if test="p_photo != null and p_photo !=''"  >
+        #{p_photo},
+      </if>
+      <if test="api_photo != null and api_photo !=''"  >
+        #{api_photo},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="MemberPerson" >
+    update member_person
+    <set >
+      <if test="p_id != null" >
+        p_id = #{p_id,jdbcType=INTEGER},
+      </if>
+      <if test="member_id != null" >
+        member_id = #{member_id,jdbcType=INTEGER},
+      </if>
+      <if test="real_name != null" >
+        real_name = #{real_name},
+      </if>
+      <if test="tel != null" >
+        tel = #{tel},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark},
+      </if>
+      <if test="p_photo != null" >
+        p_photo = #{p_photo},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

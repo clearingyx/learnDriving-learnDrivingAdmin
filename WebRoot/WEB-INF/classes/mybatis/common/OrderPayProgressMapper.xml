@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="OrderPayProgress" >
+  <select id="selectByPrimaryKey" resultType="OrderPayProgress" parameterType="java.lang.Integer" >
+    select     *    from order_pay_progress    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByOid" parameterType="Integer" resultType="OrderPayProgress">
+  	select * from order_pay_progress where order_id = #{order_id}
+  </select>
+  <select id="selectByAliPaySn" parameterType="String" resultType="OrderPayProgress">
+  	select * from order_pay_progress where alipay_sn = #{alipay_sn}
+  </select>
+  <select id="selectByProgressSn" parameterType="String" resultType="OrderPayProgress">
+  	select * from order_pay_progress where progress_sn = #{progress_sn}
+  </select>
+  <insert id="insert" parameterType="OrderPayProgress" >
+    insert into order_pay_progress
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="order_id != null" >
+        order_id,
+      </if>
+      <if test="last_date != null" >
+        last_date,
+      </if>
+      <if test="pay_date != null" >
+        pay_date,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="pay_state != null" >
+        pay_state,
+      </if>
+      <if test="several_stages != null" >
+        several_stages,
+      </if>
+      <if test="progress_sn != null" >
+        progress_sn,
+      </if>
+      <if test="alipay_sn != null" >
+        alipay_sn,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="order_id != null" >
+        #{order_id,jdbcType=INTEGER},
+      </if>
+      <if test="last_date != null" >
+        #{last_date,jdbcType=TIMESTAMP},
+      </if>
+      <if test="pay_date != null" >
+        #{pay_date,jdbcType=TIMESTAMP},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=REAL},
+      </if>
+      <if test="pay_state != null" >
+        #{pay_state,jdbcType=INTEGER},
+      </if>
+      <if test="several_stages != null" >
+        #{several_stages,jdbcType=INTEGER},
+      </if>
+      <if test="progress_sn != null" >
+        #{progress_sn},
+      </if>
+      <if test="alipay_sn != null" >
+        #{alipay_sn},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="OrderPayProgress" >
+    update order_pay_progress
+    <set >
+      <if test="order_id != null" >
+        order_id = #{order_id,jdbcType=INTEGER},
+      </if>
+      <if test="last_date != null" >
+        last_date = #{last_date,jdbcType=TIMESTAMP},
+      </if>
+      <if test="pay_date != null" >
+        pay_date = #{pay_date,jdbcType=TIMESTAMP},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=REAL},
+      </if>
+      <if test="pay_state != null" >
+        pay_state = #{pay_state,jdbcType=INTEGER},
+      </if>
+      <if test="several_stages != null" >
+        several_stages = #{several_stages,jdbcType=INTEGER},
+      </if>
+      <if test="progress_sn != null" >
+        progress_sn = #{progress_sn},
+      </if>
+      <if test="alipay_sn != null" >
+        alipay_sn = #{alipay_sn},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

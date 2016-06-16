@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="City" >
+	<select id="selectQuery" resultType="City">
+		select c1.*,c2.name as province from city c1,city c2 where c1.p_id=c2.id and c1.use_state=1 and c2.use_state=1
+	</select>
+</mapper>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Power" >
+  <select id="selectByPrimaryKey" resultType="Power" parameterType="java.lang.Integer" >
+    select *  from power   where id = #{id,jdbcType=INTEGER}
+  </select>
+  <insert id="insert" parameterType="Power" >
+    insert into power
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="power_name != null" >
+        power_name,
+      </if>
+      <if test="power_detial != null" >
+        power_detial,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="power_name != null" >
+        #{power_name,jdbcType=VARCHAR},
+      </if>
+      <if test="power_detial != null" >
+        #{power_detial,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="update" parameterType="Power" >
+    update power
+    <set >
+      <if test="power_name != null" >
+        power_name = #{power_name,jdbcType=VARCHAR},
+      </if>
+      <if test="power_detial != null" >
+        power_detial = #{power_detial,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
