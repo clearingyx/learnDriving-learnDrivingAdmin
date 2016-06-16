@@ -24,4 +24,5 @@ public class TestTwoDimensionCode {
         System.out.println(TwoDimensionCode.decoderQRCode("c://Michael_QRCode.png"));
         System.out.println(TwoDimensionCode.decoderQRCode(new URL("http://www.51app1.com/image/case/schoolCircleApp.png")));
     }
+    
 }
